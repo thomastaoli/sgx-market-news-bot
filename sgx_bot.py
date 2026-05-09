@@ -1,735 +1,546 @@
-{
- "cells": [
-  {
-   "cell_type": "code",
-   "execution_count": 48,
-   "id": "6b9e05be",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "import requests\n",
-    "import smtplib\n",
-    "import os\n",
-    "\n",
-    "from email.mime.text import MIMEText\n",
-    "from datetime import datetime"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 53,
-   "id": "c4841c52",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def main():\n",
-    "\n",
-    "    # -----------------------------\n",
-    "    # MON-FRI ONLY\n",
-    "    # -----------------------------\n",
-    "\n",
-    "    weekday = datetime.today().weekday()\n",
-    "\n",
-    "    if weekday >= 5:\n",
-    "\n",
-    "        print(\"Weekend detected. Skip.\")\n",
-    "\n",
-    "        return"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 29,
-   "id": "c2666fde",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "AGGREGATE_API = \"https://api.sgx.com/securities/v1.1/aggregate/\"\n",
-    "\n",
-    "STI_INDEX_API = \"https://api.sgx.com/indices/v1.0/pid/.STI/\"\n",
-    "\n",
-    "ALL_SECURITIES_API = \"https://api.sgx.com/securities/v1.1?params=nc%2Cadjusted-vwap%2Cbond_accrued_interest%2Cbond_clean_price%2Cbond_dirty_price%2Cbond_date%2Cb%2Cbv%2Cp%2Cc%2Cchange_vs_pc%2Cchange_vs_pc_percentage%2Ccx%2Ccn%2Cdp%2Cdpc%2Cdu%2Ced%2Cfn%2Ch%2Ciiv%2Ciopv%2Clt%2Cl%2Co%2Cp_%2Cpv%2Cptd%2Cs%2Csv%2Ctrading_time%2Cv_%2Cv%2Cvl%2Cvwap%2Cvwap-currency\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 30,
-   "id": "f342fffb",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "HEADERS = {\n",
-    "    \"User-Agent\": \"Mozilla/5.0\",\n",
-    "    \"Referer\": \"https://www.sgx.com/\"\n",
-    "}"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "cdf5755b",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "EMAIL_USER = os.getenv(\"EMAIL_USER\")\n",
-    "\n",
-    "EMAIL_PASS = os.getenv(\"EMAIL_PASS\")\n",
-    "\n",
-    "EMAIL_TO = os.getenv(\"EMAIL_TO\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 31,
-   "id": "18af70b4",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "STI_COMPONENTS = {\n",
-    "    \"A17U\": {\n",
-    "        \"zh\": \"凯德腾飞房地产信托\",\n",
-    "        \"en\": \"CapitaLand Ascendas REIT\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"C38U\": {\n",
-    "        \"zh\": \"凯德综合商业信托\",\n",
-    "        \"en\": \"CapitaLand Integrated Commercial Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"9CI\": {\n",
-    "        \"zh\": \"凯德投资\",\n",
-    "        \"en\": \"CapitaLand Investment\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"C09\": {\n",
-    "        \"zh\": \"城市发展\",\n",
-    "        \"en\": \"City Developments\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"D05\": {\n",
-    "        \"zh\": \"星展集团\",\n",
-    "        \"en\": \"DBS\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"D01\": {\n",
-    "        \"zh\": \"DFI零售集团\",\n",
-    "        \"en\": \"DFI Retail Group\",\n",
-    "        \"currency\": \"USD\"\n",
-    "        \n",
-    "    },\n",
-    "    \"J69U\": {\n",
-    "        \"zh\": \"星狮地产信托\",\n",
-    "        \"en\": \"Frasers Centrepoint Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"BUOU\": {\n",
-    "        \"zh\": \"星狮物流商产信托\",\n",
-    "        \"en\": \"Frasers Logistics & Commercial Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"G13\": {\n",
-    "        \"zh\": \"云顶新加坡\",\n",
-    "        \"en\": \"Genting Singapore\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"H78\": {\n",
-    "        \"zh\": \"香港置地\",\n",
-    "        \"en\": \"Hongkong Land\",\n",
-    "        \"currency\": \"USD\"\n",
-    "    },\n",
-    "    \"J36\": {\n",
-    "        \"zh\": \"怡和控股\",\n",
-    "        \"en\": \"Jardine Matheson\",\n",
-    "        \"currency\": \"USD\"\n",
-    "    },\n",
-    "    \"BN4\": {\n",
-    "        \"zh\": \"吉宝\",\n",
-    "        \"en\": \"Keppel\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"AJBU\": {\n",
-    "        \"zh\": \"吉宝数据中心房地产信托\",\n",
-    "        \"en\": \"Keppel DC REIT\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"ME8U\": {\n",
-    "        \"zh\": \"丰树工业信托\",\n",
-    "        \"en\": \"Mapletree Industrial Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"M44U\": {\n",
-    "        \"zh\": \"丰树物流信托\",\n",
-    "        \"en\": \"Mapletree Logistics Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"N2IU\": {\n",
-    "        \"zh\": \"丰树泛亚商业信托\",\n",
-    "        \"en\": \"Mapletree Pan Asia Commercial Trust\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"O39\": {\n",
-    "        \"zh\": \"华侨银行\",\n",
-    "        \"en\": \"OCBC\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"S58\": {\n",
-    "        \"zh\": \"新翔集团\",\n",
-    "        \"en\": \"SATS\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"5E2\": {\n",
-    "        \"zh\": \"海庭\",\n",
-    "        \"en\": \"Seatrium\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"U96\": {\n",
-    "        \"zh\": \"胜科工业\",\n",
-    "        \"en\": \"Sembcorp Industries\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"C6L\": {\n",
-    "        \"zh\": \"新航\",\n",
-    "        \"en\": \"Singapore Airlines\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"S68\": {\n",
-    "        \"zh\": \"新交所\",\n",
-    "        \"en\": \"Singapore Exchange\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"Z74\": {\n",
-    "        \"zh\": \"新电信\",\n",
-    "        \"en\": \"Singtel\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"S63\": {\n",
-    "        \"zh\": \"新科工程\",\n",
-    "        \"en\": \"ST Engineering\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"Y92\": {\n",
-    "        \"zh\": \"泰国酿酒\",\n",
-    "        \"en\": \"Thai Beverage\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"U11\": {\n",
-    "        \"zh\": \"大华银行\",\n",
-    "        \"en\": \"UOB\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"U14\": {\n",
-    "        \"zh\": \"华业集团\",\n",
-    "        \"en\": \"UOL\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"V03\": {\n",
-    "        \"zh\": \"创业公司\",\n",
-    "        \"en\": \"Venture Corp\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"F34\": {\n",
-    "        \"zh\": \"丰益国际\",\n",
-    "        \"en\": \"Wilmar International\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    },\n",
-    "    \"BS6\": {\n",
-    "        \"zh\": \"扬子江船业\",\n",
-    "        \"en\": \"Yangzijiang Shipbuilding\",\n",
-    "        \"currency\": \"SGD\"\n",
-    "    }\n",
-    "}"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 32,
-   "id": "fa661036",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def fetch_json(url):\n",
-    "\n",
-    "    r = requests.get(\n",
-    "        url,\n",
-    "        headers=HEADERS,\n",
-    "        timeout=10\n",
-    "    )\n",
-    "\n",
-    "    r.raise_for_status()\n",
-    "\n",
-    "    return r.json()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 33,
-   "id": "5ee6ddff",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def chinese_large_number(num):\n",
-    "\n",
-    "    num = int(num)\n",
-    "\n",
-    "    yi = num // 100000000\n",
-    "\n",
-    "    wan = (num % 100000000) // 10000\n",
-    "\n",
-    "    if yi > 0:\n",
-    "        return f\"{yi}亿{wan}万\"\n",
-    "\n",
-    "    if wan > 0:\n",
-    "        return f\"{wan}万\"\n",
-    "\n",
-    "    return str(num)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 34,
-   "id": "c51decb2",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "SMALL_NUM = {\n",
-    "    0: \"零\",\n",
-    "    1: \"一\",\n",
-    "    2: \"两\",\n",
-    "    3: \"三\",\n",
-    "    4: \"四\",\n",
-    "    5: \"五\",\n",
-    "    6: \"六\",\n",
-    "    7: \"七\",\n",
-    "    8: \"八\",\n",
-    "    9: \"九\",\n",
-    "    10: \"十\"\n",
-    "}\n",
-    "\n",
-    "\n",
-    "def chinese_small_num(n):\n",
-    "\n",
-    "    if n <= 10:\n",
-    "        return SMALL_NUM[n]\n",
-    "\n",
-    "    return str(n)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 35,
-   "id": "70bf894d",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def chinese_weekday():\n",
-    "\n",
-    "    mapping = {\n",
-    "        0: \"星期一\",\n",
-    "        1: \"星期二\",\n",
-    "        2: \"星期三\",\n",
-    "        3: \"星期四\",\n",
-    "        4: \"星期五\",\n",
-    "        5: \"星期六\",\n",
-    "        6: \"星期日\"\n",
-    "    }\n",
-    "\n",
-    "    return mapping[datetime.today().weekday()]"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 36,
-   "id": "6b209abd",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def chinese_date():\n",
-    "\n",
-    "    now = datetime.now()\n",
-    "\n",
-    "    return f\"{now.month}月{now.day}日\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 37,
-   "id": "ec0ad700",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def market_direction(pct):\n",
-    "\n",
-    "    if pct > 0:\n",
-    "        return {\n",
-    "            \"title\": \"上涨\",\n",
-    "            \"verb\": \"上扬\",\n",
-    "            \"move\": \"涨\"\n",
-    "        }\n",
-    "\n",
-    "    return {\n",
-    "        \"title\": \"下跌\",\n",
-    "        \"verb\": \"下挫\",\n",
-    "        \"move\": \"跌\"\n",
-    "    }"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 38,
-   "id": "636ac23c",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def format_currency(stock):\n",
-    "\n",
-    "    if stock[\"currency\"] == \"USD\":\n",
-    "        return \"美元\"\n",
-    "\n",
-    "    return \"元\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "dfb49cd3",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "def send_email(story):\n",
-    "\n",
-    "    msg = MIMEText(\n",
-    "        story,\n",
-    "        \"plain\",\n",
-    "        \"utf-8\"\n",
-    "    )\n",
-    "\n",
-    "    msg[\"Subject\"] = \"%Y%m%d_Market_Open\"\n",
-    "\n",
-    "    msg[\"From\"] = EMAIL_USER\n",
-    "\n",
-    "    msg[\"To\"] = EMAIL_TO\n",
-    "\n",
-    "    server = smtplib.SMTP(\n",
-    "        \"smtp.gmail.com\",\n",
-    "        587\n",
-    "    )\n",
-    "\n",
-    "    server.starttls()\n",
-    "\n",
-    "    server.login(\n",
-    "        EMAIL_USER,\n",
-    "        EMAIL_PASS\n",
-    "    )\n",
-    "\n",
-    "    server.send_message(msg)\n",
-    "\n",
-    "    server.quit()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 39,
-   "id": "0bf1caa4",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "aggregate = fetch_json(\n",
-    "    AGGREGATE_API\n",
-    ")[\"data\"]"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 40,
-   "id": "228f5291",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "sti = fetch_json(\n",
-    "    STI_INDEX_API\n",
-    ")[\"data\"][0]"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 41,
-   "id": "c1215e30",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "all_stocks = fetch_json(\n",
-    "    ALL_SECURITIES_API\n",
-    ")[\"data\"]"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "cf797925",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 42,
-   "id": "a8a8b46e",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "sti_stocks = []\n",
-    "\n",
-    "for stock in all_stocks[\"prices\"]:\n",
-    "\n",
-    "    symbol = stock[\"nc\"]\n",
-    "\n",
-    "    if symbol in STI_COMPONENTS:\n",
-    "\n",
-    "        stock[\"zh_name\"] = STI_COMPONENTS[symbol][\"zh\"]\n",
-    "\n",
-    "        stock[\"en_name\"] = STI_COMPONENTS[symbol][\"en\"]\n",
-    "\n",
-    "        stock[\"currency\"] = STI_COMPONENTS[symbol][\"currency\"]\n",
-    "\n",
-    "        sti_stocks.append(stock)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 43,
-   "id": "f6318298",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "up = 0\n",
-    "down = 0\n",
-    "flat = 0\n",
-    "\n",
-    "for stock in sti_stocks:\n",
-    "\n",
-    "    pct = stock[\"p\"]\n",
-    "\n",
-    "    if pct > 0:\n",
-    "        up += 1\n",
-    "\n",
-    "    elif pct < 0:\n",
-    "        down += 1\n",
-    "\n",
-    "    else:\n",
-    "        flat += 1"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 44,
-   "id": "ae6e3e8e",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "top_gainer = max(\n",
-    "    sti_stocks,\n",
-    "    key=lambda x: x[\"p\"]\n",
-    ")\n",
-    "\n",
-    "top_loser = min(\n",
-    "    sti_stocks,\n",
-    "    key=lambda x: x[\"p\"]\n",
-    ")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 45,
-   "id": "127f517a",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "direction = market_direction(\n",
-    "    sti[\"ptc\"]\n",
-    ")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 46,
-   "id": "81d38f03",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "story = f\"\"\"\n",
-    "本地股市{chinese_weekday()}开盘\n",
-    "{direction['title']}{abs(sti['ptc']):.2f}%\n",
-    "\n",
-    "新加坡股市{chinese_weekday()}（{chinese_date()}）\n",
-    "开盘{direction['verb']}。\n",
-    "\n",
-    "截至早上9时10分，\n",
-    "新加坡海峡时报指数\n",
-    "{direction['move']}{abs(sti['c']):.2f}点\n",
-    "或{abs(sti['ptc']):.2f}%，\n",
-    "报{sti['lp']:.2f}点。\n",
-    "\n",
-    "本地股市交易量\n",
-    "{chinese_large_number(aggregate['volume'])}股，\n",
-    "交易金额\n",
-    "{chinese_large_number(aggregate['value'])}元。\n",
-    "\n",
-    "上升股{int(aggregate['advancers'])}只，\n",
-    "下跌股{int(aggregate['decliners'])}只。\n",
-    "\n",
-    "30只海指成份股中，\n",
-    "仅{chinese_small_num(up)}只上升，\n",
-    "{chinese_small_num(flat)}只持平，\n",
-    "共{down}只下跌。\n",
-    "\n",
-    "涨幅最大的是\n",
-    "{top_gainer['zh_name']}（{top_gainer['en_name']}），\n",
-    "开市上涨{abs(top_gainer['p']):.2f}%，\n",
-    "报{top_gainer['lt']:.2f}{format_currency(top_gainer)}\n",
-    "\n",
-    "跌幅最大的是\n",
-    "{top_loser['zh_name']}（{top_loser['en_name']}），\n",
-    "开市下挫{abs(top_loser['p']):.2f}%，\n",
-    "报{top_loser['lt']:.2f}{format_currency(top_loser)}\n",
-    "\"\"\""
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 47,
-   "id": "38666d0c",
-   "metadata": {},
-   "outputs": [
-    {
-     "name": "stdout",
-     "output_type": "stream",
-     "text": [
-      "\n",
-      "本地股市星期日开盘\n",
-      "下跌0.41%\n",
-      "\n",
-      "新加坡股市星期日（5月10日）\n",
-      "开盘下挫。\n",
-      "\n",
-      "截至早上9时10分，\n",
-      "新加坡海峡时报指数\n",
-      "跌20.06点\n",
-      "或0.41%，\n",
-      "报4921.90点。\n",
-      "\n",
-      "本地股市交易量\n",
-      "18亿3509万股，\n",
-      "交易金额\n",
-      "24亿4208万元。\n",
-      "\n",
-      "上升股248只，\n",
-      "下跌股337只。\n",
-      "\n",
-      "30只海指成份股中，\n",
-      "仅六只上升，\n",
-      "两只持平，\n",
-      "共22只下跌。\n",
-      "\n",
-      "涨幅最大的是\n",
-      "怡和控股（Jardine Matheson），\n",
-      "开市上涨1.57%，\n",
-      "报71.28美元\n",
-      "\n",
-      "跌幅最大的是\n",
-      "香港置地（Hongkong Land），\n",
-      "开市下挫5.17%，\n",
-      "报8.25美元\n",
-      "\n"
-     ]
-    }
-   ],
-   "source": [
-    "print(story)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": 52,
-   "id": "ae010c6c",
-   "metadata": {},
-   "outputs": [
-    {
-     "ename": "OSError",
-     "evalue": "[Errno 30] Read-only file system: '20260510_market_open.txt'",
-     "output_type": "error",
-     "traceback": [
-      "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
-      "\u001b[0;31mOSError\u001b[0m                                   Traceback (most recent call last)",
-      "Cell \u001b[0;32mIn[52], line 5\u001b[0m\n\u001b[1;32m      1\u001b[0m filename \u001b[38;5;241m=\u001b[39m datetime\u001b[38;5;241m.\u001b[39mnow()\u001b[38;5;241m.\u001b[39mstrftime(\n\u001b[1;32m      2\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124m%\u001b[39m\u001b[38;5;124mY\u001b[39m\u001b[38;5;124m%\u001b[39m\u001b[38;5;124mm\u001b[39m\u001b[38;5;132;01m%d\u001b[39;00m\u001b[38;5;124m_market_open.txt\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m      3\u001b[0m )\n\u001b[0;32m----> 5\u001b[0m \u001b[38;5;28;01mwith\u001b[39;00m \u001b[38;5;28;43mopen\u001b[39;49m\u001b[43m(\u001b[49m\n\u001b[1;32m      6\u001b[0m \u001b[43m        \u001b[49m\u001b[43mfilename\u001b[49m\u001b[43m,\u001b[49m\n\u001b[1;32m      7\u001b[0m \u001b[43m        \u001b[49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mw\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[43m,\u001b[49m\n\u001b[1;32m      8\u001b[0m \u001b[43m        \u001b[49m\u001b[43mencoding\u001b[49m\u001b[38;5;241;43m=\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\u001b[38;5;124;43mutf-8\u001b[39;49m\u001b[38;5;124;43m\"\u001b[39;49m\n\u001b[1;32m      9\u001b[0m \u001b[43m)\u001b[49m \u001b[38;5;28;01mas\u001b[39;00m f:\n\u001b[1;32m     10\u001b[0m     f\u001b[38;5;241m.\u001b[39mwrite(story)\n",
-      "File \u001b[0;32m~/.pyenv/versions/3.11.6/lib/python3.11/site-packages/IPython/core/interactiveshell.py:310\u001b[0m, in \u001b[0;36m_modified_open\u001b[0;34m(file, *args, **kwargs)\u001b[0m\n\u001b[1;32m    303\u001b[0m \u001b[38;5;28;01mif\u001b[39;00m file \u001b[38;5;129;01min\u001b[39;00m {\u001b[38;5;241m0\u001b[39m, \u001b[38;5;241m1\u001b[39m, \u001b[38;5;241m2\u001b[39m}:\n\u001b[1;32m    304\u001b[0m     \u001b[38;5;28;01mraise\u001b[39;00m \u001b[38;5;167;01mValueError\u001b[39;00m(\n\u001b[1;32m    305\u001b[0m         \u001b[38;5;124mf\u001b[39m\u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mIPython won\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124mt let you open fd=\u001b[39m\u001b[38;5;132;01m{\u001b[39;00mfile\u001b[38;5;132;01m}\u001b[39;00m\u001b[38;5;124m by default \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    306\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124mas it is likely to crash IPython. If you know what you are doing, \u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    307\u001b[0m         \u001b[38;5;124m\"\u001b[39m\u001b[38;5;124myou can use builtins\u001b[39m\u001b[38;5;124m'\u001b[39m\u001b[38;5;124m open.\u001b[39m\u001b[38;5;124m\"\u001b[39m\n\u001b[1;32m    308\u001b[0m     )\n\u001b[0;32m--> 310\u001b[0m \u001b[38;5;28;01mreturn\u001b[39;00m \u001b[43mio_open\u001b[49m\u001b[43m(\u001b[49m\u001b[43mfile\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;241;43m*\u001b[39;49m\u001b[43margs\u001b[49m\u001b[43m,\u001b[49m\u001b[43m \u001b[49m\u001b[38;5;241;43m*\u001b[39;49m\u001b[38;5;241;43m*\u001b[39;49m\u001b[43mkwargs\u001b[49m\u001b[43m)\u001b[49m\n",
-      "\u001b[0;31mOSError\u001b[0m: [Errno 30] Read-only file system: '20260510_market_open.txt'"
-     ]
-    }
-   ],
-   "source": [
-    "filename = datetime.now().strftime(\n",
-    "        \"%Y%m%d_market_open.txt\"\n",
-    ")\n",
-    "\n",
-    "with open(\n",
-    "        filename,\n",
-    "        \"w\",\n",
-    "        encoding=\"utf-8\"\n",
-    ") as f:\n",
-    "    f.write(story)"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "b9bc0fa6",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "send_email(story)\n",
-    "\n",
-    "print(\"Email sent.\")"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "0e619edf",
-   "metadata": {},
-   "outputs": [],
-   "source": [
-    "if __name__ == \"__main__\":\n",
-    "    main()"
-   ]
-  },
-  {
-   "cell_type": "code",
-   "execution_count": null,
-   "id": "5b5cf457",
-   "metadata": {},
-   "outputs": [],
-   "source": []
-  }
- ],
- "metadata": {
-  "kernelspec": {
-   "display_name": "3.11.6",
-   "language": "python",
-   "name": "python3"
-  },
-  "language_info": {
-   "codemirror_mode": {
-    "name": "ipython",
-    "version": 3
-   },
-   "file_extension": ".py",
-   "mimetype": "text/x-python",
-   "name": "python",
-   "nbconvert_exporter": "python",
-   "pygments_lexer": "ipython3",
-   "version": "3.11.6"
-  }
- },
- "nbformat": 4,
- "nbformat_minor": 5
+import requests
+import smtplib
+import os
+
+from email.mime.text import MIMEText
+from datetime import datetime
+
+# =========================================
+# APIs
+# =========================================
+
+AGGREGATE_API = "https://api.sgx.com/securities/v1.1/aggregate/"
+
+STI_INDEX_API = "https://api.sgx.com/indices/v1.0/pid/.STI/"
+
+ALL_SECURITIES_API = "XXXX"
+
+# =========================================
+# HEADERS
+# =========================================
+
+HEADERS = {
+    "User-Agent": "Mozilla/5.0",
+    "Referer": "https://www.sgx.com/"
 }
+
+# =========================================
+# EMAIL CONFIG
+# =========================================
+
+EMAIL_USER = os.getenv("EMAIL_USER")
+
+EMAIL_PASS = os.getenv("EMAIL_PASS")
+
+EMAIL_TO = os.getenv("EMAIL_TO")
+
+# =========================================
+# STI COMPONENTS
+# =========================================
+
+STI_COMPONENTS = {
+
+    "A17U": {
+        "zh": "凯德腾飞房地产信托",
+        "en": "CapitaLand Ascendas REIT",
+        "currency": "SGD"
+    },
+
+    "C38U": {
+        "zh": "凯德综合商业信托",
+        "en": "CapitaLand Integrated Commercial Trust",
+        "currency": "SGD"
+    },
+
+    "9CI": {
+        "zh": "凯德投资",
+        "en": "CapitaLand Investment",
+        "currency": "SGD"
+    },
+
+    "C09": {
+        "zh": "城市发展",
+        "en": "City Developments",
+        "currency": "SGD"
+    },
+
+    "D05": {
+        "zh": "星展集团",
+        "en": "DBS",
+        "currency": "SGD"
+    },
+
+    "D01": {
+        "zh": "DFI零售集团",
+        "en": "DFI Retail Group",
+        "currency": "USD"
+    },
+
+    "J69U": {
+        "zh": "星狮地产信托",
+        "en": "Frasers Centrepoint Trust",
+        "currency": "SGD"
+    },
+
+    "BUOU": {
+        "zh": "星狮物流商产信托",
+        "en": "Frasers Logistics & Commercial Trust",
+        "currency": "SGD"
+    },
+
+    "G13": {
+        "zh": "云顶新加坡",
+        "en": "Genting Singapore",
+        "currency": "SGD"
+    },
+
+    "H78": {
+        "zh": "香港置地",
+        "en": "Hongkong Land",
+        "currency": "USD"
+    },
+
+    "J36": {
+        "zh": "怡和控股",
+        "en": "Jardine Matheson",
+        "currency": "USD"
+    },
+
+    "BN4": {
+        "zh": "吉宝",
+        "en": "Keppel",
+        "currency": "SGD"
+    },
+
+    "AJBU": {
+        "zh": "吉宝数据中心房地产信托",
+        "en": "Keppel DC REIT",
+        "currency": "SGD"
+    },
+
+    "ME8U": {
+        "zh": "丰树工业信托",
+        "en": "Mapletree Industrial Trust",
+        "currency": "SGD"
+    },
+
+    "M44U": {
+        "zh": "丰树物流信托",
+        "en": "Mapletree Logistics Trust",
+        "currency": "SGD"
+    },
+
+    "N2IU": {
+        "zh": "丰树泛亚商业信托",
+        "en": "Mapletree Pan Asia Commercial Trust",
+        "currency": "SGD"
+    },
+
+    "O39": {
+        "zh": "华侨银行",
+        "en": "OCBC",
+        "currency": "SGD"
+    },
+
+    "S58": {
+        "zh": "新翔集团",
+        "en": "SATS",
+        "currency": "SGD"
+    },
+
+    "5E2": {
+        "zh": "海庭",
+        "en": "Seatrium",
+        "currency": "SGD"
+    },
+
+    "U96": {
+        "zh": "胜科工业",
+        "en": "Sembcorp Industries",
+        "currency": "SGD"
+    },
+
+    "C6L": {
+        "zh": "新航",
+        "en": "Singapore Airlines",
+        "currency": "SGD"
+    },
+
+    "S68": {
+        "zh": "新交所",
+        "en": "Singapore Exchange",
+        "currency": "SGD"
+    },
+
+    "Z74": {
+        "zh": "新电信",
+        "en": "Singtel",
+        "currency": "SGD"
+    },
+
+    "S63": {
+        "zh": "新科工程",
+        "en": "ST Engineering",
+        "currency": "SGD"
+    },
+
+    "Y92": {
+        "zh": "泰国酿酒",
+        "en": "Thai Beverage",
+        "currency": "SGD"
+    },
+
+    "U11": {
+        "zh": "大华银行",
+        "en": "UOB",
+        "currency": "SGD"
+    },
+
+    "U14": {
+        "zh": "华业集团",
+        "en": "UOL",
+        "currency": "SGD"
+    },
+
+    "V03": {
+        "zh": "创业公司",
+        "en": "Venture Corp",
+        "currency": "SGD"
+    },
+
+    "F34": {
+        "zh": "丰益国际",
+        "en": "Wilmar International",
+        "currency": "SGD"
+    },
+
+    "BS6": {
+        "zh": "扬子江船业",
+        "en": "Yangzijiang Shipbuilding",
+        "currency": "SGD"
+    }
+}
+
+# =========================================
+# HELPERS
+# =========================================
+
+SMALL_NUM = {
+    0: "零",
+    1: "一",
+    2: "两",
+    3: "三",
+    4: "四",
+    5: "五",
+    6: "六",
+    7: "七",
+    8: "八",
+    9: "九",
+    10: "十"
+}
+
+
+def chinese_small_num(n):
+
+    if n <= 10:
+        return SMALL_NUM[n]
+
+    return str(n)
+
+
+def chinese_large_number(num):
+
+    num = int(num)
+
+    yi = num // 100000000
+
+    wan = (num % 100000000) // 10000
+
+    if yi > 0:
+        return f"{yi}亿{wan}万"
+
+    if wan > 0:
+        return f"{wan}万"
+
+    return str(num)
+
+
+def chinese_weekday():
+
+    mapping = {
+        0: "星期一",
+        1: "星期二",
+        2: "星期三",
+        3: "星期四",
+        4: "星期五",
+        5: "星期六",
+        6: "星期日"
+    }
+
+    return mapping[
+        datetime.today().weekday()
+    ]
+
+
+def chinese_date():
+
+    now = datetime.now()
+
+    return f"{now.month}月{now.day}日"
+
+
+def market_direction(pct):
+
+    if pct > 0:
+
+        return {
+            "title": "上涨",
+            "verb": "上扬",
+            "move": "涨"
+        }
+
+    return {
+        "title": "下跌",
+        "verb": "下挫",
+        "move": "跌"
+    }
+
+
+def currency_suffix(stock):
+
+    if stock["currency"] == "USD":
+        return "美元"
+
+    return "元"
+
+
+# =========================================
+# FETCH JSON
+# =========================================
+
+def fetch_json(url):
+
+    r = requests.get(
+        url,
+        headers=HEADERS,
+        timeout=10
+    )
+
+    r.raise_for_status()
+
+    return r.json()
+
+
+# =========================================
+# EMAIL
+# =========================================
+
+def send_email(story):
+
+    msg = MIMEText(
+        story,
+        "plain",
+        "utf-8"
+    )
+
+    msg["Subject"] = "SGX 开盘简讯"
+
+    msg["From"] = EMAIL_USER
+
+    msg["To"] = EMAIL_TO
+
+    server = smtplib.SMTP(
+        "smtp.gmail.com",
+        587
+    )
+
+    server.starttls()
+
+    server.login(
+        EMAIL_USER,
+        EMAIL_PASS
+    )
+
+    server.send_message(msg)
+
+    server.quit()
+
+
+# =========================================
+# MAIN
+# =========================================
+
+def main():
+
+    # -----------------------------
+    # MON-FRI ONLY
+    # -----------------------------
+
+    weekday = datetime.today().weekday()
+
+    if weekday >= 5:
+
+        print("Weekend detected. Skip.")
+
+        return
+
+    # -----------------------------
+    # FETCH APIs
+    # -----------------------------
+
+    aggregate = fetch_json(
+        AGGREGATE_API
+    )["data"]
+
+    sti = fetch_json(
+        STI_INDEX_API
+    )["data"][0]
+
+    all_stocks_response = fetch_json(
+        ALL_SECURITIES_API
+    )
+
+    all_stocks = all_stocks_response["prices"]
+
+    # -----------------------------
+    # FILTER STI COMPONENTS
+    # -----------------------------
+
+    sti_stocks = []
+
+    for stock in all_stocks:
+
+        symbol = stock["nc"]
+
+        if symbol in STI_COMPONENTS:
+
+            stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
+
+            stock["en_name"] = STI_COMPONENTS[symbol]["en"]
+
+            stock["currency"] = STI_COMPONENTS[symbol]["currency"]
+
+            sti_stocks.append(stock)
+
+    # -----------------------------
+    # MARKET BREADTH
+    # -----------------------------
+
+    up = 0
+    down = 0
+    flat = 0
+
+    for stock in sti_stocks:
+
+        pct = stock["p"]
+
+        if pct > 0:
+            up += 1
+
+        elif pct < 0:
+            down += 1
+
+        else:
+            flat += 1
+
+    # -----------------------------
+    # TOP GAINER / LOSER
+    # -----------------------------
+
+    top_gainer = max(
+        sti_stocks,
+        key=lambda x: x["p"]
+    )
+
+    top_loser = min(
+        sti_stocks,
+        key=lambda x: x["p"]
+    )
+
+    # -----------------------------
+    # DIRECTION
+    # -----------------------------
+
+    direction = market_direction(
+        sti["ptc"]
+    )
+
+    # -----------------------------
+    # STORY
+    # -----------------------------
+
+    story = f"""
+本地股市{chinese_weekday()}开盘
+{direction['title']}{abs(sti['ptc']):.2f}%
+
+新加坡股市{chinese_weekday()}（{chinese_date()}）
+开盘{direction['verb']}。
+
+截至早上9时10分，
+新加坡海峡时报指数
+{direction['move']}{abs(sti['c']):.2f}点
+或{abs(sti['ptc']):.2f}%，
+报{sti['lp']:.2f}点。
+
+本地股市交易量
+{chinese_large_number(aggregate['volume'])}股，
+交易金额
+{chinese_large_number(aggregate['value'])}元。
+
+上升股{int(aggregate['advancers'])}只，
+下跌股{int(aggregate['decliners'])}只。
+
+30只海指成份股中，
+仅{chinese_small_num(up)}只上升，
+{chinese_small_num(flat)}只持平，
+共{down}只下跌。
+
+涨幅最大的是
+{top_gainer['zh_name']}（{top_gainer['en_name']}），
+开市上涨{abs(top_gainer['p']):.2f}%，
+报{top_gainer['lt']:.2f}{currency_suffix(top_gainer)}。
+
+跌幅最大的是
+{top_loser['zh_name']}（{top_loser['en_name']}），
+开市下挫{abs(top_loser['p']):.2f}%，
+报{top_loser['lt']:.2f}{currency_suffix(top_loser)}。
+"""
+
+    # -----------------------------
+    # PRINT
+    # -----------------------------
+
+    print(story)
+
+    # -----------------------------
+    # SAVE FILE
+    # -----------------------------
+
+    filename = datetime.now().strftime(
+        "%Y%m%d_market_open.txt"
+    )
+
+    with open(
+        filename,
+        "w",
+        encoding="utf-8"
+    ) as f:
+
+        f.write(story)
+
+    # -----------------------------
+    # SEND EMAIL
+    # -----------------------------
+
+    send_email(story)
+
+    print("Email sent.")
+
+
+# =========================================
+# RUN
+# =========================================
+
+if __name__ == "__main__":
+
+    main()
