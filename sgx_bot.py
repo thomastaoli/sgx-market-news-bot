@@ -394,7 +394,7 @@ def main():
         ALL_SECURITIES_API
     )
 
-    all_stocks = all_stocks_response["prices"]
+    all_stocks = all_stocks_response
 
     # -----------------------------
     # FILTER STI COMPONENTS
