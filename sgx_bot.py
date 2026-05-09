@@ -2,6 +2,11 @@ import requests
 import smtplib
 import os
 
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+SGT = ZoneInfo("Asia/Singapore")
+
 from email.mime.text import MIMEText
 from datetime import datetime
 
@@ -284,7 +289,7 @@ def chinese_weekday():
 
 def chinese_date():
 
-    now = datetime.now()
+    now = datetime.now(SGT)
 
     return f"{now.month}月{now.day}日"
 
