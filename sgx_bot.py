@@ -378,7 +378,7 @@ def main():
 
     weekday = datetime.today().weekday()
 
-    if weekday >= 5:
+    if weekday <= 5:
 
         print("Weekend detected. Skip.")
 
