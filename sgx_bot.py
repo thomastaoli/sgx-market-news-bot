@@ -396,6 +396,8 @@ def main():
 
     all_stocks = all_stocks_response
 
+    print(all_stocks_response)
+
     # -----------------------------
     # FILTER STI COMPONENTS
     # -----------------------------
