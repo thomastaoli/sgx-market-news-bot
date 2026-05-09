@@ -389,34 +389,34 @@ def main():
     sti = fetch_json(
         STI_INDEX_API
     )["data"][0]
-
+    
     all_stocks_response = fetch_json(
-        ALL_SECURITIES_API
-    )
+    ALL_SECURITIES_API
+)
 
-    all_stocks = all_stocks_response
+# -----------------------------
+# EXTRACT PRICES ARRAY
+# -----------------------------
 
-    print(all_stocks_response)
+all_stocks = all_stocks_response["data"]["prices"]
 
-    # -----------------------------
-    # FILTER STI COMPONENTS
-    # -----------------------------
+# -----------------------------
+# FILTER STI COMPONENTS
+# -----------------------------
 
-    sti_stocks = []
+sti_stocks = []
 
-    for stock in all_stocks["prices"]:
+for stock in all_stocks:
 
-        symbol = stock["nc"]
+    symbol = stock["nc"]
 
-        if symbol in STI_COMPONENTS:
+    if symbol in STI_COMPONENTS:
 
-            stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
+        stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
 
-            stock["en_name"] = STI_COMPONENTS[symbol]["en"]
+        stock["en_name"] = STI_COMPONENTS[symbol]["en"]
 
-            stock["currency"] = STI_COMPONENTS[symbol]["currency"]
-
-            sti_stocks.append(stock)
+        sti_stocks.append(stock)
 
     # -----------------------------
     # MARKET BREADTH
