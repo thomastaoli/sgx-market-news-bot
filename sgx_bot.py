@@ -402,7 +402,7 @@ def main():
 
     sti_stocks = []
 
-    for stock in all_stocks:
+    for stock in all_stocks["prices"]:
 
         symbol = stock["nc"]
 
