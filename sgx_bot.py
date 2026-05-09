@@ -398,25 +398,25 @@ def main():
 # EXTRACT PRICES ARRAY
 # -----------------------------
 
-all_stocks = all_stocks_response["data"]["prices"]
+    all_stocks = all_stocks_response["data"]["prices"]
 
 # -----------------------------
 # FILTER STI COMPONENTS
 # -----------------------------
 
-sti_stocks = []
+    sti_stocks = []
 
-for stock in all_stocks:
-
-    symbol = stock["nc"]
-
-    if symbol in STI_COMPONENTS:
-
-        stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
-
-        stock["en_name"] = STI_COMPONENTS[symbol]["en"]
-
-        sti_stocks.append(stock)
+    for stock in all_stocks:
+        
+        symbol = stock["nc"]
+        
+        if symbol in STI_COMPONENTS:
+            
+            stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
+            
+            stock["en_name"] = STI_COMPONENTS[symbol]["en"]
+            
+            sti_stocks.append(stock)
 
     # -----------------------------
     # MARKET BREADTH
