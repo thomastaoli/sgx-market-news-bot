@@ -272,6 +272,8 @@ def chinese_large_number(num):
 
 def chinese_weekday():
 
+    now = datetime.now(SGT)
+
     mapping = {
         0: "星期一",
         1: "星期二",
@@ -283,7 +285,7 @@ def chinese_weekday():
     }
 
     return mapping[
-        datetime.today().weekday()
+        now.weekday()
     ]
 
 
