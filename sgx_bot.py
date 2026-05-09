@@ -350,7 +350,7 @@ def send_email(story):
         "utf-8"
     )
 
-    msg["Subject"] = "SGX 开盘简讯"
+    msg["Subject"] = "SGX开市即时（%Y%m%d）"
 
     msg["From"] = EMAIL_USER
 
@@ -475,40 +475,21 @@ def main():
     # -----------------------------
 
     story = f"""
-本地股市{chinese_weekday()}开盘
-{direction['title']}{abs(sti['ptc']):.2f}%
+本地股市{chinese_weekday()}开市{direction['title']}{abs(sti['ptc']):.2f}%
 
-新加坡股市{chinese_weekday()}（{chinese_date()}）
-开盘{direction['verb']}。
+新加坡股市{chinese_weekday()}（{chinese_date()}）开市{direction['verb']}。
 
-截至早上9时10分，
-新加坡海峡时报指数
-{direction['move']}{abs(sti['c']):.2f}点
-或{abs(sti['ptc']):.2f}%，
-报{sti['lp']:.2f}点。
+截至早上9时10分，新加坡海峡时报指数{direction['move']}{abs(sti['c']):.2f}点或{abs(sti['ptc']):.2f}%，报{sti['lp']:.2f}点。
 
-本地股市交易量
-{chinese_large_number(aggregate['volume'])}股，
-交易金额
-{chinese_large_number(aggregate['value'])}元。
+本地股市交易量{chinese_large_number(aggregate['volume'])}股，交易金额{chinese_large_number(aggregate['value'])}元。
 
-上升股{int(aggregate['advancers'])}只，
-下跌股{int(aggregate['decliners'])}只。
+上升股{int(aggregate['advancers'])}只，下跌股{int(aggregate['decliners'])}只。
 
-30只海指成份股中，
-仅{chinese_small_num(up)}只上升，
-{chinese_small_num(flat)}只持平，
-共{down}只下跌。
+30只海指成份股中，仅{chinese_small_num(up)}只上升，{chinese_small_num(flat)}只持平，共{down}只下跌。
 
-涨幅最大的是
-{top_gainer['zh_name']}（{top_gainer['en_name']}），
-开市上涨{abs(top_gainer['p']):.2f}%，
-报{top_gainer['lt']:.2f}{currency_suffix(top_gainer)}。
+涨幅最大的是{top_gainer['zh_name']}（{top_gainer['en_name']}），开市上涨{abs(top_gainer['p']):.2f}%，报{top_gainer['lt']:.2f}{currency_suffix(top_gainer)}。
 
-跌幅最大的是
-{top_loser['zh_name']}（{top_loser['en_name']}），
-开市下挫{abs(top_loser['p']):.2f}%，
-报{top_loser['lt']:.2f}{currency_suffix(top_loser)}。
+跌幅最大的是{top_loser['zh_name']}（{top_loser['en_name']}），开市下挫{abs(top_loser['p']):.2f}%，报{top_loser['lt']:.2f}{currency_suffix(top_loser)}。
 """
 
     # -----------------------------
