@@ -415,6 +415,8 @@ def main():
             stock["zh_name"] = STI_COMPONENTS[symbol]["zh"]
             
             stock["en_name"] = STI_COMPONENTS[symbol]["en"]
+
+            stock["currency"] = STI_COMPONENTS[symbol]["currency"]
             
             sti_stocks.append(stock)
 
