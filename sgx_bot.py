@@ -350,7 +350,9 @@ def send_email(story):
         "utf-8"
     )
 
-    msg["Subject"] = "SGX开市即时（%Y%m%d）"
+    msg["Subject"] = datetime.now(SGT).strftime(
+    "SGX开市即时（%Y%m%d）"
+)
 
     msg["From"] = EMAIL_USER
 
