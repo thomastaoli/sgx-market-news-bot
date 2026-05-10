@@ -311,21 +311,23 @@ def chinese_date():
     return f"{now.month}月{now.day}日"
 
 
+def direction_word(pct):
+
+    if pct > 0:
+        return "涨"
+
+    if pct < 0:
+        return "跌"
+
+    return "持平"
+
+
 def market_direction(pct):
 
     if pct > 0:
+        return "上涨"
 
-        return {
-            "title": "上涨",
-            "verb": "上扬",
-            "move": "涨"
-        }
-
-    return {
-        "title": "下跌",
-        "verb": "下挫",
-        "move": "跌"
-    }
+    return "下跌"
 
 
 def currency_suffix(stock):
