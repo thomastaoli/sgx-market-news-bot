@@ -387,6 +387,22 @@ def fetch_asia_indexes():
 
     return results
 
+# =========================================
+# 指数持平处理
+# =========================================
+
+def asia_direction_text(pct):
+
+    if abs(pct) < 0.01:
+
+        return "几乎持平"
+
+    if pct > 0:
+
+        return f"涨{abs(pct):.2f}%"
+
+    return f"跌{abs(pct):.2f}%"
+
 
 # =========================================
 # EMAIL
@@ -554,9 +570,9 @@ def main():
 
 新加坡海峡时报指数{chinese_weekday()}（{chinese_date()}）闭市收报{sti['lp']:.2f}点，{direction_word(sti['ptc'])}{abs(sti['c']):.2f}点或{abs(sti['ptc']):.2f}%。
 
-上海股市{direction_word(asia['上海'])}{abs(asia['上海']):.2f}%、深圳股市{direction_word(asia['深圳'])}{abs(asia['深圳']):.2f}%、香港股市{direction_word(asia['香港'])}{abs(asia['香港']):.2f}%。
+上海股市{asia_direction_text(asia['上海'])}，深圳股市{asia_direction_text(asia['深圳'])}，香港股市{asia_direction_text(asia['香港'])}。
 
-其他市场方面，台湾股市{direction_word(asia['台湾'])}{abs(asia['台湾']):.2f}%，东京{direction_word(asia['东京'])}{abs(asia['东京']):.2f}%，首尔{direction_word(asia['首尔'])}{abs(asia['首尔']):.2f}%。
+其他市场方面，台湾股市{asia_direction_text(asia['台湾'])}，东京{asia_direction_text(asia['东京'])}，首尔{asia_direction_text(asia['首尔'])}。
 
 新加坡股市{chinese_weekday()}全场成交量{chinese_large_number(aggregate['volume'])}股，总交易额{chinese_large_number(aggregate['value'])}元。上升股{int(aggregate['advancers'])}只，下跌股{int(aggregate['decliners'])}只。
 
