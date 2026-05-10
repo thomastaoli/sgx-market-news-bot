@@ -435,11 +435,7 @@ def main():
 
     weekday = datetime.today().weekday()
 
-    if weekday >= 5:
-
-        print("Weekend detected. Skip.")
-
-        return
+    
 
     # -----------------------------
     # FETCH APIs
