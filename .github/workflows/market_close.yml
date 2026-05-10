@@ -1,8 +1,8 @@
-name: SGX Market Open Bot
+name: SGX Market Close Bot
 
 on:
   schedule:
-    - cron: '10 1 * * 1-5'
+    - cron: '30 9 * * 1-5'
 
   workflow_dispatch:
 
@@ -25,10 +25,10 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run open bot
+      - name: Run close bot
         env:
           EMAIL_USER: ${{ secrets.EMAIL_USER }}
           EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
           EMAIL_TO: ${{ secrets.EMAIL_TO }}
         run: |
-          python sgx_bot_open.py
+          python sgx_bot_close.py
