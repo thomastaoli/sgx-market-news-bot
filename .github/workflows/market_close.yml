@@ -2,7 +2,8 @@ name: SGX Market Close Bot
 
 on:
   schedule:
-    - cron: '30 9 * * 1-5'
+    - cron: '42 13 * * 1-5'
+      timezone: 'Asia/Singapore'
 
   workflow_dispatch:
 
